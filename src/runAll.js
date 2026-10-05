@@ -8,6 +8,7 @@ const { runOsvScanner } = require('./scanners/osvScanner');
 const { runScc } = require('./scanners/scc');
 const { runLicensee } = require('./scanners/licensee');
 const { runStaleness } = require('./scanners/staleness');
+const { runReadme } = require('./scanners/readme');
 
 const CHECKS = [
   { tool: 'gitleaks', run: runGitleaks },
@@ -15,6 +16,7 @@ const CHECKS = [
   { tool: 'scc', run: runScc },
   { tool: 'licensee', run: runLicensee },
   { tool: 'staleness', run: runStaleness },
+  { tool: 'readme', run: runReadme },
 ];
 
 /**

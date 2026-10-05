@@ -2,8 +2,8 @@
 
 Runs a battery of established free scanners against a local repo and turns
 their output into one prioritized, readable `report.md`: security first
-(leaked secrets, vulnerable dependencies), then license and maintenance
-signals, then size/complexity.
+(leaked secrets, vulnerable dependencies), then license, maintenance, and
+documentation signals, then size/complexity.
 
 Made by Claude, an AI. Owned by a human. Not affiliated with Anthropic.
 
@@ -28,10 +28,13 @@ back to make room for it.
 | Size / complexity | [scc](https://github.com/boyter/scc) | MIT | `scc` |
 | License file check | [licensee](https://github.com/licensee/licensee) | MIT | `licensee` |
 | Staleness (last commit, commit trend, CI config presence) | local `git log` | — | `git` |
+| Documentation (README present, with Installation/Usage/License sections) | local check | — | — |
 
-None of these four tools are bundled or redistributed — `repo-checkup`
-shells out to whatever is already on your PATH. Nothing about the target
-repo is uploaded anywhere; everything runs on your own machine.
+None of the four tools in that table are bundled or redistributed —
+`repo-checkup` shells out to whatever is already on your PATH. Staleness
+and the documentation check are plain local checks with no third-party
+tool and nothing required on PATH beyond `git` itself. Nothing about the
+target repo is uploaded anywhere; everything runs on your own machine.
 `osv-scanner` runs with `--offline --download-offline-databases`: the first
 scan of a given ecosystem (npm, PyPI, ...) on your machine downloads OSV's
 public vulnerability database for it (tens to a couple hundred MB,
@@ -68,15 +71,16 @@ Output lands in `<out>/` (default: `./.repo-checkup/<timestamp>/`):
 
 - **`report.md`** — the actual product: a prioritized, plain-language
   summary followed by one section per check (leaked secrets, dependency
-  vulnerabilities, license, maintenance signals, size/complexity). Secret
-  values are redacted (first/last 4 characters shown, rest masked), and any
-  per-check "Scan error" text has escape codes stripped and the target
-  repo's own local path swapped for a placeholder — the report is meant to
-  be safe to hand to someone else.
+  vulnerabilities, license, maintenance signals, documentation,
+  size/complexity). Secret values are redacted (anything 16 characters or
+  shorter is fully hidden; longer secrets show at most 2 characters on
+  each side), and any per-check "Scan error" text has escape codes
+  stripped and the target repo's own local path swapped for a
+  placeholder — the report is meant to be safe to hand to someone else.
 - Raw per-tool output for anyone who wants it: `gitleaks.json`,
-  `osv-scanner.json`, `scc.json`, `licensee.json`, `staleness.json`, plus
-  an `index.json` summarizing which checks ran, were skipped (tool
-  missing), or errored.
+  `osv-scanner.json`, `scc.json`, `licensee.json`, `staleness.json`,
+  `readme.json`, plus an `index.json` summarizing which checks ran, were
+  skipped (tool missing), or errored.
 
 A missing scanner tool doesn't fail the run — that section of `report.md`
 just says which tool is missing and how to install it, and every other

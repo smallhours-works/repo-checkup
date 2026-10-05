@@ -9,9 +9,9 @@ const { synthesize } = require('./synthesize');
 const USAGE = `Usage: repo-checkup <path-to-repo> [--out <dir>]
 
 Runs gitleaks, osv-scanner, scc, and licensee against the target repo
-(plus a local git-log staleness check), writes each tool's raw output
-to --out (default: ./.repo-checkup/<timestamp>/), and synthesizes a single
-prioritized report.md in the same directory.`;
+(plus a local git-log staleness check and a README-completeness check),
+writes each tool's raw output to --out (default: ./.repo-checkup/<timestamp>/),
+and synthesizes a single prioritized report.md in the same directory.`;
 
 function parseArgs(argv) {
   const args = { target: null, out: null, extra: [] };

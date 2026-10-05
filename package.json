@@ -2,9 +2,13 @@
   "name": "repo-checkup",
   "version": "0.1.0",
   "private": true,
-  "description": "Runs gitleaks, osv-scanner, scc, and licensee against a local repo and turns their output into one prioritized report.md.",
+  "description": "Runs gitleaks, osv-scanner, scc, and licensee against a local repo (plus a local git-log staleness check and a README-completeness check) and turns their output into one prioritized report.md.",
+  "main": "src/synthesize.js",
   "bin": {
     "repo-checkup": "./bin/repo-checkup.js"
+  },
+  "scripts": {
+    "test": "node --test ./test/**/*.test.js"
   },
   "files": [
     "bin",

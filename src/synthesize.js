@@ -293,6 +293,16 @@ function summarizeScc(result, targetRepo) {
   };
 }
 
+function summarizeReadme(result, targetRepo) {
+  if (!result) return { available: false, note: 'Check did not run.' };
+  if (result.status !== 'ok') {
+    return { available: false, note: scanErrorNote(result, targetRepo) };
+  }
+
+  const data = readJson(result.outputFile) || {};
+  return { available: true, ...data };
+}
+
 function summarizeStaleness(result, targetRepo) {
   if (!result) return { available: false, note: 'Check did not run.' };
   if (result.status === 'missing') {
@@ -319,12 +329,20 @@ function lastCommitAge(staleness) {
   return `${days} day${days === 1 ? '' : 's'} ago`;
 }
 
+function readmeMissingSections(readme) {
+  const missing = [];
+  if (!readme.sections.installation) missing.push('Installation');
+  if (!readme.sections.usage) missing.push('Usage');
+  if (!readme.sections.license) missing.push('License');
+  return missing;
+}
+
 function formatMoney(n) {
   if (typeof n !== 'number') return 'unknown';
   return `$${Math.round(n).toLocaleString('en-US')}`;
 }
 
-function renderMarkdown({ targetRepo, generatedAt, gitleaks, osv, licensee, scc, staleness }) {
+function renderMarkdown({ targetRepo, generatedAt, gitleaks, osv, licensee, scc, staleness, readme }) {
   const lines = [];
   const push = (s = '') => lines.push(s);
 
@@ -372,6 +390,16 @@ function renderMarkdown({ targetRepo, generatedAt, gitleaks, osv, licensee, scc,
     summaryBits.push(`Last commit ${lastCommitAge(staleness)}.`);
   } else if (staleness.available && staleness.isGitRepo) {
     summaryBits.push('Git repository with no commits yet.');
+  }
+  if (readme.available) {
+    if (!readme.found) {
+      summaryBits.push('No README found.');
+    } else if (readme.sectionsChecked) {
+      const missing = readmeMissingSections(readme);
+      if (missing.length > 0) {
+        summaryBits.push(`README missing: ${missing.join(', ')}.`);
+      }
+    }
   }
   for (const bit of summaryBits) push(`- ${bit}`);
   push();
@@ -473,6 +501,25 @@ function renderMarkdown({ targetRepo, generatedAt, gitleaks, osv, licensee, scc,
   }
   push();
 
+  // --- Documentation --------------------------------------------------------
+  push('## 6. Documentation');
+  push();
+  if (!readme.available) {
+    push(`Not checked — ${readme.note}`);
+  } else if (!readme.found) {
+    push('No README found. Worth adding one — it\'s often the first thing a buyer, client, or new teammate opens.');
+  } else if (!readme.sectionsChecked) {
+    push(`${codeSpan(readme.filename)} found. Section structure (Installation/Usage/License) isn't checked automatically for this README format.`);
+  } else {
+    const missing = readmeMissingSections(readme);
+    if (missing.length === 0) {
+      push(`${codeSpan(readme.filename)} found, with Installation, Usage, and License sections.`);
+    } else {
+      push(`${codeSpan(readme.filename)} found, but missing: ${missing.join(', ')}.`);
+    }
+  }
+  push();
+
   push('---');
   push('_Made by Claude, an AI. Owned by a human. Not affiliated with Anthropic._');
 
@@ -496,6 +543,7 @@ function collect(outDir) {
   const licensee = summarizeLicensee(findResult(index, 'licensee'), index.targetRepo);
   const scc = summarizeScc(findResult(index, 'scc'), index.targetRepo);
   const staleness = summarizeStaleness(findResult(index, 'staleness'), index.targetRepo);
+  const readme = summarizeReadme(findResult(index, 'readme'), index.targetRepo);
 
   return {
     targetRepo: index.targetRepo,
@@ -505,6 +553,7 @@ function collect(outDir) {
     licensee,
     scc,
     staleness,
+    readme,
   };
 }
 
