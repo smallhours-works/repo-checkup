@@ -86,6 +86,10 @@ A missing scanner tool doesn't fail the run — that section of `report.md`
 just says which tool is missing and how to install it, and every other
 check still runs.
 
+## Pro add-on
+
+Repo Checkup Pro ($29, one-time) turns the scan into a client-ready HTML and PDF report with a plain-English summary. It runs on your machine, so your code never leaves it. Buy it here: https://buy.stripe.com/4gM28l6xk5jJ6r96Erc3m00
+
 ## Status
 
 Version 0.1.0. The command-line tool and the report work end to end.

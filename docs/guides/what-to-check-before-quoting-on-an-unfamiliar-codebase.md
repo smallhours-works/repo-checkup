@@ -145,3 +145,5 @@ these by hand, that's exactly what
 [Repo Checkup](https://github.com/smallhours-works/repo-checkup) (free,
 open-source, MIT-licensed) automates — but the checks above work just as
 well run individually, with no install beyond the tools already linked.
+
+See also: [Repo Checkup Pro and the Due-Diligence Kit](../#pro-and-the-kit), two paid add-ons.

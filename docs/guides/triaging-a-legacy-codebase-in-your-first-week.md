@@ -113,3 +113,5 @@ running the commands by hand,
 open-source, MIT-licensed) automates exactly this — but everything above
 works just as well run by hand, with nothing to install beyond the tools
 already linked.
+
+See also: [Repo Checkup Pro and the Due-Diligence Kit](../#pro-and-the-kit), two paid add-ons.
